@@ -1,0 +1,9 @@
+{
+  "wp_admin_email": "your@emailaddress.com",
+  "wp_admin_user": "username",
+  "wp_admin_password": "password",
+  "sites_folder": "/path/to/sites/directory/",
+  "open_browser": "1",
+  "browser": "Safari",
+  "valet_domain": "test",
+}
