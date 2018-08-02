@@ -1,5 +1,10 @@
-brew "homebrew/php/php72 mcrypt homebrew/php/php72-mcrypt"
+tap "homebrew/bundle"
+tap "homebrew/services"
+tap "homebrew/core"
+brew "php", restart_service: true
+brew "dnsmasq", restart_service: true
 brew "wp-cli"
-brew "mysql", restart_service: true, link: true
-brew "node"
-brew "composer"
+brew "wp-cli-completion"
+brew "mariadb", restart_service: true
+brew "nginx", restart_service: true
+brew "jq"
