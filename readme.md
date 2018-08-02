@@ -33,10 +33,6 @@ ValetPress is a script that allows for the quick installation and configuration 
 - Deletes the database for that project
 - Deletes the directory for that project
 
-`vp install`
-
-- Installs all required packages to get ValetPress working on a new machine.
-
 `vp help`
 
 - Will display a summary of available commands
