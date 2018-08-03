@@ -1,11 +1,41 @@
 #!/bin/bash
-#############################
-# ValetPress - 2018.08.02.1 #
-#############################
+version="2018.08.03.1"
 
 # Added for debugging
 set -euo pipefail
 IFS=$'\n\t'
+
+# Colors
+NORMAL=$(tput sgr0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2; tput bold)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+MAGENTA=$(tput setaf 5)
+CYAN=$(tput setaf 6)
+WHITE=$(tput setaf 7)
+
+function red() {
+	echo -e "$RED$*$NORMAL"
+}
+function green() {
+	echo -e "$GREEN$*$NORMAL"
+}
+function yellow() {
+	echo -e "$YELLOW$*$NORMAL"
+}
+function blue() {
+	echo -e "$BLUE$*$NORMAL"
+}
+function magenta() {
+	echo -e "$MAGENTA$*$NORMAL"
+}
+function cyan() {
+	echo -e "$CYAN$*$NORMAL"
+}
+function white() {
+	echo -e "$WHITE$*$NORMAL"
+}
 
 # Core WordPress install function
 wordpress_installer () {
@@ -23,10 +53,12 @@ PHP
 
 # Output WordPress login info
 wordpress_login_info () {
-	echo "Project Created: http://$project_name.$valet_domain/"
-	echo "Login: http://$project_name.$valet_domain/wp-login.php"
-	echo "Username: $wp_admin_user"
-	echo "Password: $wp_admin_password"
+	white "==================================================================="
+	green "Project Created: http://$project_name.$valet_domain/"
+	cyan "Login: http://$project_name.$valet_domain/wp-login.php"
+	cyan "Username: $wp_admin_user"
+	cyan "Password: $wp_admin_password"
+	echo " "
 	if [ "$open_browser" = 1 ]; then
 		open -a "$browser" -g http://$project_name.$valet_domain/wp-login.php
 	fi
@@ -36,12 +68,12 @@ wordpress_login_info () {
 plugin_activation () {
 	# Detect if plugins should be added
 	if [ ! -z "$plugins_add" -a "$plugins_add" != " " ]; then
-			echo "Installing plugins."
+			green "Installing plugins."
 			echo $plugins_add | xargs wp plugin install
 	fi
 	# Detect if plugins should be removed
 	if [ ! -z "$plugins_remove" -a "$plugins_remove" != " " ]; then
-	        echo "Removing plugins."
+	        red "Removing plugins."
 			echo $plugins_remove | xargs wp plugin delete
 	fi 
 	# Activate all installed plugins
@@ -65,16 +97,16 @@ plugins_remove=$(cat $vp_path/config.json|jq -r .plugins_remove)
 # ValetPress Commands
 if [ $# -lt 1 ] || [ "$1" = "help" ] || [ -z "$1" ];then
 	clear
-	echo "ValetPress Commands:"
-	echo " vp create - Create fresh WordPress install. "
-	echo " vp delete - Delete an existing WordPress project. "
-	echo " vp help   - Display ValetPress help screen. "
+	white "ValetPress $version"
+	cyan "  vp create - Create fresh WordPress install. "
+	cyan "  vp delete - Delete an existing WordPress project. "
+	cyan "  vp help   - Display ValetPress help screen. "
+	echo " "
 	exit 1;
 else
 	# ValetPress create option
 	if [ "$1" = "create" ]; then
-		echo "ValetPress, create new site "
-		echo "Project Name:"
+		white "Please enter the name of your project."
 		read -r project_name
 		cd "$sites_folder"
 
@@ -84,7 +116,7 @@ else
 			wp db drop --yes
 			cd ..
 			rm -rf "$project_name"
-			echo "Previous Project Deleted: $project_name"
+			red "Previous Project Deleted: $project_name"
 		fi
 
 		# Create new project folder
@@ -92,9 +124,9 @@ else
 		cd "$project_name"
 
 		# Select install method
-		echo " How do you wish to install WordPress? "
-		echo " 1.) Default WordPress Install "
-		echo " 2.) WordPress with specific theme "
+		white "How do you wish to install WordPress? "
+		cyan " 1.) Default WordPress Install "
+		cyan " 2.) WordPress with specific theme "
 		read -r create_choice
 
 			# Default WordPress Install
@@ -108,7 +140,7 @@ else
 			
 			# WordPress install with specific theme
 			if [ "$create_choice" = 2 ]; then
-				echo "Theme Location eg ~/Downloads/theme.zip "
+				yellow "Theme Location eg ~/Downloads/theme.zip "
 				read -r theme_location
 				wp core download --skip-content
 				mkdir $sites_folder/"$project_name"/wp-content/plugins/
@@ -124,11 +156,11 @@ else
 	if [ "$1" = "delete" ]; then
 		if [ "$(ls -A "$sites_folder")" ]; then
 			cd "$sites_folder"
-			echo "ValetPress, delete a project "
+			red "ValetPress, delete a project "
 			ls -d */ | cut -f1 -d'/'
-			echo "Project Name:"
+			cyan "Project that you wish to delete"
 			read -r project_name
-			echo "Are you sure you want to delete $project_name ? (y/N)"
+			red "Are you sure you want to delete $project_name ? (y/N)"
 			read -r delete_confirm
 			delete_confirm_converted=$( echo "$delete_confirm" | tr "[:upper:]" "[:lower:]" )
 
@@ -137,10 +169,10 @@ else
 				wp db drop --yes
 				cd ..
 				rm -rf "$project_name"
-				echo "Sucess: $project_name deleted"
+				green "Sucess: $project_name deleted"
 			fi	 
 		else
-			echo "No WordPress installs detected. "
+			magenta "No WordPress installs detected. "
 		fi
 	fi
 fi
