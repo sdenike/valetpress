@@ -45,6 +45,8 @@ ValetPress is a script that allows for the quick installation and configuration 
  - `open_browser` if set to 1 a browser will auto open after an install, 0 will make so it doesn't.
  - `browser` you can set the default browser such as Safari, or Google Chrome, etc
  - `valet_domain` Default is set to `test` but you can change this to whatever you use for Valet, this can be adjusted by using `valet domain TLDTOUSE`
+ - `plugins_add` Plugins that you wish to install/activate on each new install
+ - `plugins_remove` Plugins that you wish to remove from the default installs
  
 ## Requirements
 

@@ -6,4 +6,6 @@
   "open_browser": "1",
   "browser": "Safari",
   "valet_domain": "test",
+  "plugins_add": "hide-admin-bar wordpress-seo",
+  "plugins_remove": "akismet hello"
 }

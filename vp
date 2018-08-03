@@ -32,6 +32,22 @@ wordpress_login_info () {
 	fi
 }
 
+# Plugin add/remove function
+plugin_activation () {
+	# Detect if plugins should be added
+	if [ ! -z "$plugins_add" -a "$plugins_add" != " " ]; then
+			echo "Installing plugins."
+			echo $plugins_add | xargs wp plugin install
+	fi
+	# Detect if plugins should be removed
+	if [ ! -z "$plugins_remove" -a "$plugins_remove" != " " ]; then
+	        echo "Removing plugins."
+			echo $plugins_remove | xargs wp plugin delete
+	fi 
+	# Activate all installed plugins
+	wp plugin activate --all
+}
+
 # Get ValetPress install directory
 vp_path="$(cd "$(dirname "$0")" && pwd)"
 
@@ -43,6 +59,8 @@ sites_folder=$(cat $vp_path/config.json|jq -r .sites_folder)
 open_browser=$(cat $vp_path/config.json|jq -r .open_browser)
 browser=$(cat $vp_path/config.json|jq -r .browser)
 valet_domain=$(cat $vp_path/config.json|jq -r .valet_domain)
+plugins_add=$(cat $vp_path/config.json|jq -r .plugins_add)
+plugins_remove=$(cat $vp_path/config.json|jq -r .plugins_remove)
 
 # ValetPress Commands
 if [ $# -lt 1 ] || [ "$1" = "help" ] || [ -z "$1" ];then
@@ -84,7 +102,7 @@ else
 				wp core download
 				wordpress_installer
 				cp -R $vp_path/plugins/ $sites_folder/$project_name/wp-content/plugins/
-				wp plugin activate --all
+				plugin_activation
 				wordpress_login_info
 			fi
 			
@@ -97,8 +115,7 @@ else
 				wordpress_installer
 				wp theme install $theme_location --activate
 				cp -R $vp_path/plugins/ $sites_folder/$project_name/wp-content/plugins/
-				wp plugin activate --all
-				WP_ADMIN=true wp tgmpa-plugin install --all
+				plugin_activation
 				wordpress_login_info
 			fi	
 	fi
