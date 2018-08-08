@@ -57,6 +57,5 @@ Below you will find a list of all required system files in order for ValetPress 
 - [Homebrew](https://brew.sh) - Used for installing MySQL/PHP/etc
 - [jq](https://stedolan.github.io/jq/) - Used for reading the config file
 - [WP-CLI](https://wp-cli.org/) - Needed to complete WordPress installs
-- [TGMPA WP-CLI plugin](https://github.com/itspriddle/wp-cli-tgmpa-plugin) - Used for WordPress plugin activation
 
 Note: You will need to add the ValetPress directory to your $PATH in your .bash_profile or .zshrc so that you can run the `vp` command from anywhere on your computer.
