@@ -61,14 +61,14 @@ wordpress_login_info () {
 	cyan "Login: http://$project_name.$valet_domain/wp-login.php"
 	cyan "Username: $wp_admin_user"
 	cyan "Password: $wp_admin_password"
-	echo " "
 	if [ "$open_browser" = 1 ]; then
 		open -a "$browser" -g http://$project_name.$valet_domain/wp-login.php
 	fi
-	
 	if [ "$livereload" = 1 ]; then
+		yellow "Added to LiveReload."
 		open "livereload:add?path="$sites_folder"/"$project_name"/"
 	fi	
+	echo " "
 }
 
 # Plugin add/remove function
@@ -180,12 +180,17 @@ else
 			delete_confirm_converted=$( echo "$delete_confirm" | tr "[:upper:]" "[:lower:]" )
 
 			if [ "$delete_confirm_converted" = "y" ]; then
+				if [ "$livereload" = 1 ]; then
+					red "Removing from LiveReload"
+					open "livereload:remove?path="$sites_folder"/"$project_name"/"
+				fi	
 				cd "$project_name"
 				wp db drop --yes --quiet
 				red "Database has been dropped."
 				cd ..
 				rm -rf "$project_name"
-				green "Sucess: $project_name deleted"
+				red "Project files deleted."
+				green "Success: $project_name deleted"
 			fi	 
 		else
 			magenta "No WordPress installs detected. "
