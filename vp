@@ -65,6 +65,10 @@ wordpress_login_info () {
 	if [ "$open_browser" = 1 ]; then
 		open -a "$browser" -g http://$project_name.$valet_domain/wp-login.php
 	fi
+	
+	if [ "$livereload" = 1 ]; then
+		open "livereload:add?path="$sites_folder"/"$project_name"/"
+	fi	
 }
 
 # Plugin add/remove function
@@ -99,6 +103,7 @@ browser=$(cat $vp_path/config.json|jq -r .browser)
 valet_domain=$(cat $vp_path/config.json|jq -r .valet_domain)
 plugins_add=$(cat $vp_path/config.json|jq -r .plugins_add)
 plugins_remove=$(cat $vp_path/config.json|jq -r .plugins_remove)
+livereload=$(cat $vp_path/config.json|jq -r .livereload)
 
 # ValetPress Commands
 if [ $# -lt 1 ] || [ "$1" = "help" ] || [ -z "$1" ];then

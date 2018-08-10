@@ -15,7 +15,7 @@
 function vp_auto_login() {
 	if ( $GLOBALS['pagenow'] === 'wp-login.php' && $_REQUEST['loggedout'] != 'true' ) {
 		$creds = array(
-			'user_login'    => 'shelby',
+			'user_login'    => 'admin',
 			'user_password' => 'password',
 			'remember'      => true
 		);
