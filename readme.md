@@ -38,16 +38,16 @@ ValetPress is a script that allows for the quick installation and configuration 
 - Will display a summary of available commands
 
 ## Config Explained
- - `wp_admin_email` is used as the admin email address for new WP installs. [You need to update the auto-login plugin with the new username and password as shown here](https://github.com/sdenike/valetpress/blob/master/plugins/auto-login/auto-login.php#L18-L19)
- - `wp_admin_user` is used as the username for new WP installs. [You need to update the auto-login plugin with the new username and password as shown here](https://github.com/sdenike/valetpress/blob/master/plugins/auto-login/auto-login.php#L18-L19)
- - `wp_admin_password` is used as the password for new WP installs.
+ - `wp_admin_email` is used as the admin email address for new WP installs. 
+ - `wp_admin_user` is used as the username for new WP installs. [If changed you must update the username in the auto-login plugin](https://github.com/sdenike/valetpress/blob/master/plugins/auto-login/auto-login.php#L18)
+ - `wp_admin_password` is used as the password for new WP installs. [If changed you must update the password in the auto-login plugin](https://github.com/sdenike/valetpress/blob/master/plugins/auto-login/auto-login.php#L19)
  - `sites_folder` is a directory that you've run `valet park` in to serve sites.
- - `open_browser` if set to 1 a browser will auto open after an install, 0 will make so it doesn't.
+ - `open_browser` if set to 1 a browser will auto open after the install completes, 0 will make so that it doesn't
  - `browser` you can set the default browser such as Safari, or Google Chrome, etc
  - `valet_domain` Default is set to `test` but you can change this to whatever you use for Valet, this can be adjusted by using `valet domain TLDTOUSE`
  - `plugins_add` Plugins that you wish to install/activate on each new install
  - `plugins_remove` Plugins that you wish to remove from the default installs
- - `livereload` Add new project to [LiveReload](http://livereload.com) application
+ - `livereload` If set to 1 the project will be added to [LiveReload](http://livereload.com), 0 will make so it is not
  
  
 ## Requirements
