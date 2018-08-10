@@ -113,7 +113,7 @@ else
 	# ValetPress create option
 	if [ "$1" = "create" ]; then
 		white "Please enter the name of your project."
-		read -r project_name
+		read -p ": " -r project_name
 		cd "$sites_folder"
 
 		# Delete existing project if detected
@@ -133,10 +133,11 @@ else
 		white "How do you wish to install WordPress? "
 		cyan " 1.) Default WordPress Install "
 		cyan " 2.) WordPress with specific theme "
-		read -r create_choice
+		read -p "Choice: " -r create_choice
 
 			# Default WordPress Install
 			if [ "$create_choice" = 1 ]; then
+				yellow "Downloading WordPress."
 				wp core download --quiet
 				green "WordPress have been downloaded."
 				wordpress_installer
@@ -149,6 +150,7 @@ else
 			if [ "$create_choice" = 2 ]; then
 				yellow "Theme Location eg ~/Downloads/theme.zip "
 				read -r theme_location
+				yellow "Downloading WordPress."
 				wp core download --skip-content --quiet
 				green "WordPress has been downloaded."
 				mkdir $sites_folder/"$project_name"/wp-content/plugins/
@@ -174,7 +176,8 @@ else
 
 			if [ "$delete_confirm_converted" = "y" ]; then
 				cd "$project_name"
-				wp db drop --yes
+				wp db drop --yes --quiet
+				red "Database has been dropped."
 				cd ..
 				rm -rf "$project_name"
 				green "Sucess: $project_name deleted"
