@@ -4,11 +4,11 @@ require_once( ABSPATH . "wp-includes/pluggable.php" );
 /*include 'sdenike.php';
 
 Plugin Name: Extra functions
-Plugin URI: https://shelbydenike.com
+Plugin URI: https://systmweb.com
 Description: Specific functions to help the site perform better.
 Version: 1.0
 Author: sdenike
-AuthorURI: https://shelbydenike.com
+AuthorURI: https://systmweb.com
 */
 
 function sdenike_header_function() {
