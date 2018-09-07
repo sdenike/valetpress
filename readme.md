@@ -1,6 +1,14 @@
 # ValetPress
 
-ValetPress is a script that allows for the quick installation and configuration of WordPress for local development and testing. This is a full rewrite of the code that @AaronRutley originally created (https://github.com/AaronRutley/valetpress) but has been written from the ground up to add other features that I found the need for in my local setup.
+ValetPress allows for the quick installation and configuration of WordPress install for local development and testing. The idea of this script was inspired from the script that @AaronRutley originally created (https://github.com/AaronRutley/valetpress), but has been written from the ground up to provide cleaner code, as well as adding/removing features that I felt were or were not necessary for my daily usage.
+
+## What?
+
+The script itself uses Laravel Valet and WP-CLI to speed up the creation of a WordPress install on your local system.  Before @AaronRutley demoed his script to me I was using MAMP, and/or manually setting up installs on my computer which was far more time consuming than his script was.
+
+## Why?
+
+While the original script works great… I got bored and decided to rewrite it for my own needs.
 
 ## Features
 
@@ -13,7 +21,7 @@ ValetPress is a script that allows for the quick installation and configuration 
 1. Setup Laravel Valet / MySQL [Instructions](https://laravel.com/docs/5.6/valet#installation)
 2. Download / Clone this repo into a directory such as `~/Scripts/valetpress`
 3. Include the `vp` script in your `.bash_profile` or `.zshrc` file
-4. Run `vp install` to install all dependencies (This command currently does not work, everything must already be installed. Please see the 'Requirements' section of the readme.)
+4. A Brewfile is included to help with the dependancies that are needed. `brew bundle`
 5. Update the `config.json` file to reflect your needed settings. (see the 'Config Explained' section below)
 
 ## Available Commands:
@@ -49,7 +57,6 @@ ValetPress is a script that allows for the quick installation and configuration 
  - `plugins_remove` Plugins that you wish to remove from the default installs
  - `livereload` If set to `1` the project will be added to [LiveReload](http://livereload.com), `0` will make so it is not
  
- 
 ## Requirements
 
 Below you will find a list of all required system files in order for ValetPress to proper work.
@@ -59,5 +66,6 @@ Below you will find a list of all required system files in order for ValetPress 
 - [Homebrew](https://brew.sh) - Used for installing MySQL/PHP/etc
 - [jq](https://stedolan.github.io/jq/) - Used for reading the config file
 - [WP-CLI](https://wp-cli.org/) - Needed to complete WordPress installs
+- [LiveReload](http://livereload.com) - If you are wishing to use this for testing
 
-Note: You will need to add the ValetPress directory to your $PATH in your .bash_profile or .zshrc so that you can run the `vp` command from anywhere on your computer.
+Note: You will need to add the ValetPress directory to your $PATH in your `.bash_profile` or `.zshrc` so that you can run the `vp` command from anywhere on your computer.
