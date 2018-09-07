@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Auto Login
- * Plugin URI: https://shelbydenike.com
- * Description: Auto Login plugin for local dev sites using ValetPress (Original code adapted from @AaronRutley)
- * Version: 2018.08.02
+ * Plugin URI: https://systmweb.com
+ * Description: Auto Login plugin for local dev sites using ValetPress (Original code adapted with permission from @AaronRutley)
+ * Version: 2018.09.07
  * Author: @sdenike
- * Author URI: https://shelbydenike.com
+ * Author URI: https://systmweb.com
  *
  * License: GPL 2.0+
  * License URI: http://www.opensource.org/licenses/gpl-license.php
