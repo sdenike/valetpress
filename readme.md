@@ -30,7 +30,7 @@ While the original script works great… I got bored and decided to rewrite it f
 
 - Download WordPress into a directory like `~/Sites/myproject` as specified in the config.json
 - Setup the database called `myproject` & configure the install
-- Create a user `shelby` with the password `password`
+- Create a user `admin` with the password `password`
 - Have `myproject.test` running in just a few seconds
 
 `vp delete`
