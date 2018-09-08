@@ -6,7 +6,7 @@ require_once( ABSPATH . "wp-includes/pluggable.php" );
 Plugin Name: Extra functions
 Plugin URI: https://systmweb.com
 Description: Specific functions to help the site perform better.
-Version: 1.0
+Version: 2.0
 Author: sdenike
 AuthorURI: https://systmweb.com
 */
@@ -152,3 +152,26 @@ class Pj_Transient_Cleaner {
 }
 
 Pj_Transient_Cleaner::load();
+
+// Add Livereload.js to header function
+function livereload_add() {
+?>
+	<script src="<?php echo get_site_url();?>:35729/livereload.js?snipver=2" type="text/javascript" defer=""></script>
+<?php
+}
+add_action('wp_head', 'livereload_add');
+
+// Auto login function
+function vp_auto_login() {
+	if ( $GLOBALS['pagenow'] === 'wp-login.php' && $_REQUEST['loggedout'] != 'true' ) {
+		$creds = array(
+			'user_login'    => 'admin',
+			'user_password' => 'password',
+			'remember'      => true
+		);
+		$user = wp_signon( $creds, false );
+		if( $_REQUEST['redirect_to'] ) {$redirect_url = $_REQUEST['redirect_to']; } else { $redirect_url = get_bloginfo('url').'/wp-admin/';}
+		wp_redirect( $redirect_url );
+	}
+}
+add_action( 'after_setup_theme', 'vp_auto_login', 10, 2 );
