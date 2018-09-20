@@ -55,7 +55,6 @@ While the original script works great… I got bored and decided to rewrite it f
  - `valet_domain` Default is set to `test` but you can change this to whatever you use for Valet, this can be adjusted by using `valet domain TLDTOUSE`
  - `plugins_add` Plugins that you wish to install/activate on each new install
  - `plugins_remove` Plugins that you wish to remove from the default installs
- - `livereload` If set to `1` the project will be added to [LiveReload](http://livereload.com), `0` will make so it is not
  
 ## Requirements
 
