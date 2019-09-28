@@ -39,7 +39,7 @@ function white() {
 
 # Core WordPress install function
 wordpress_installer () {
-	wp core config --dbname="$project_name" --dbuser=root --dbhost=127.0.0.1 --quiet --extra-php <<PHP
+	/usr/bin/php /usr/local/bin/wp core config --dbname="$project_name" --dbuser=root --dbhost=127.0.0.1 --quiet --extra-php <<PHP
 define( 'WP_DEBUG', false );
 define( 'WP_DEBUG_LOG', false );
 define( 'FS_METHOD', 'direct' );
@@ -47,9 +47,9 @@ define( 'WP_SITEURL', 'http://$project_name.$valet_domain/' );
 define( 'WP_HOME', 'http://$project_name.$valet_domain/' );
 PHP
 	green "wp-config.php has been generated."
-	wp db create --quiet
+	/usr/bin/php /usr/local/bin/wp db create --quiet
 	green "Database created."
-	wp core install --url="$project_name"."$valet_domain" --title="$project_name"."$valet_domain" --admin_user="$wp_admin_user" --admin_password="$wp_admin_password" --admin_email="$wp_admin_email" --quiet
+	/usr/bin/php /usr/local/bin/wp core install --url="$project_name"."$valet_domain" --title="$project_name"."$valet_domain" --admin_user="$wp_admin_user" --admin_password="$wp_admin_password" --admin_email="$wp_admin_email" --quiet
 	green "WordPress has been installed."
 	cd "$sites_folder"/"$project_name"/
 }
@@ -76,17 +76,17 @@ plugin_activation () {
 	# Detect if plugins should be added
 	if [ ! -z "$plugins_add" -a "$plugins_add" != " " ]; then
 			green "Installing plugins."
-			echo $plugins_add | xargs wp plugin install --quiet
+			echo $plugins_add | xargs /usr/bin/php /usr/local/bin/wp plugin install --quiet
 			yellow "$plugins_add added to install."
 	fi
 	# Detect if plugins should be removed
 	if [ ! -z "$plugins_remove" -a "$plugins_remove" != " " ]; then
 	        red "Removing plugins."
-			echo $plugins_remove | xargs wp plugin delete --quiet
+			echo $plugins_remove | xargs /usr/bin/php /usr/local/bin/wp plugin delete --quiet
 			red "$plugins_remove removed from install"
 	fi 
 	# Activate all installed plugins
-	wp plugin activate --all --quiet
+	/usr/bin/php /usr/local/bin/wp plugin activate --all --quiet
 	green "Plugins have been activated."
 }
 
@@ -124,7 +124,7 @@ else
 		# Delete existing project if detected
 		if [ -d "$project_name" ]; then
 			cd "$project_name"
-			wp db drop --yes
+			/usr/bin/php /usr/local/bin/wp db drop --yes
 			cd ..
 			rm -rf "$project_name"
 			red "Previous Project Deleted: $project_name"
@@ -143,7 +143,7 @@ else
 			# Default WordPress Install
 			if [ "$create_choice" = 1 ]; then
 				yellow "Downloading WordPress."
-				wp core download --quiet
+				/usr/bin/php /usr/local/bin/wp core download --quiet
 				green "WordPress have been downloaded."
 				wordpress_installer
 				cp -R $vp_path/plugins/ $sites_folder/$project_name/wp-content/plugins/
@@ -156,11 +156,11 @@ else
 				yellow "Theme Location eg ~/Downloads/theme.zip "
 				read -r theme_location
 				yellow "Downloading WordPress."
-				wp core download --skip-content --quiet
+				/usr/bin/php /usr/local/bin/wp core download --skip-content --quiet
 				green "WordPress has been downloaded."
 				mkdir $sites_folder/"$project_name"/wp-content/plugins/
 				wordpress_installer
-				wp theme install $theme_location --activate
+				/usr/bin/php /usr/local/bin/wp theme install $theme_location --activate
 				cp -R $vp_path/plugins/ $sites_folder/$project_name/wp-content/plugins/
 				plugin_activation
 				wordpress_login_info
@@ -185,7 +185,7 @@ else
 					open "livereload:remove?path="$sites_folder"/"$project_name"/"
 				fi	
 				cd "$project_name"
-				wp db drop --yes --quiet
+				/usr/bin/php /usr/local/bin/wp db drop --yes --quiet
 				red "Database has been dropped."
 				cd ..
 				rm -rf "$project_name"
