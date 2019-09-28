@@ -1,5 +1,5 @@
 #!/bin/bash
-version="2018.09.07.1"
+version="2019.09.28.1"
 
 # Added for debugging
 set -euo pipefail
