@@ -6,7 +6,7 @@ require_once( ABSPATH . "wp-includes/pluggable.php" );
 Plugin Name: ValetPress functions
 Plugin URI: https://systmweb.com
 Description: Specific functions used by ValetPress, do NOT use this in production.
-Version: 1.0
+Version: 1.1
 Author: sdenike
 AuthorURI: https://systmweb.com
 */
@@ -24,22 +24,6 @@ function vp_header_function() {
 }
 
 add_action('wp_head','vp_header_function');
-
-//* Enable GZIP compression function
-function vp_http_compression() {
-	// Dont use on Admin HTML editor
-	if (stripos($uri, '/js/tinymce') !== false)
-		return false;
-
-	// Check if ob_gzhandler already loaded
-	if (ini_get('output_handler') == 'ob_gzhandler')
-		return false;
-
-	// Load HTTP Compression if correct extension is loaded
-	if (extension_loaded('zlib'))
-			if(!ob_start("ob_gzhandler")) ob_start();
-}
-add_action('init', 'vp_http_compression');
 
 //* Remove JS/CSS versions
 function vp_remove_cssjs_ver( $src ) {
