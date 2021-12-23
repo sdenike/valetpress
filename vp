@@ -1,5 +1,5 @@
 #!/bin/bash
-version="2020.07.27.1"
+version="2020.12.23.1"
 
 # Added for debugging
 set -euo pipefail
@@ -107,7 +107,7 @@ plugins_remove=$(cat $vp_path/config.json|jq -r .plugins_remove)
 livereload=$(cat $vp_path/config.json|jq -r .livereload)
 
 # ValetPress Commands
-if [ $# -lt 1 ] || [ "$1" = "help" ] || [ -z "$1" ];then
+if [ $# -lt 1 ] || [ "$1" = "help" ] || [ "$1" = "-h" ] || [ -z "$1" ];then
 	clear
 	white "ValetPress $version"
 	cyan "  vp create - Create fresh WordPress install. "
