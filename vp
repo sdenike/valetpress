@@ -1,5 +1,12 @@
 #!/bin/bash
-version="2020.12.23.1"
+
+# Debug - usage > DEBUG=1 vp <command>
+if [[ "${DEBUG}" ]]; then
+  export PS4='+ [${BASH_SOURCE##*/}:${LINENO}] '
+  set -x
+fi
+
+version="2022.3.2.1"
 
 # Added for debugging
 set -euo pipefail
@@ -39,18 +46,16 @@ function white() {
 
 # Core WordPress install function
 wordpress_installer () {
-	/opt/homebrew/bin/php /opt/homebrew/bin/wp core config --dbname="$project_name" --dbuser=root --dbhost=localhost --quiet --extra-php <<PHP
-define( 'WP_DEBUG', false );
-define( 'WP_DEBUG_LOG', false );
+	$php $wpcli core config --dbname="$project_name" --dbuser=root --dbhost=localhost --quiet --extra-php <<PHP
 define( 'FS_METHOD', 'direct' );
 define( 'WP_ENVIRONMENT_TYPE', 'development' );
 define( 'WP_SITEURL', 'http://$project_name.$valet_domain/' );
 define( 'WP_HOME', 'http://$project_name.$valet_domain/' );
 PHP
 	green "wp-config.php has been generated."
-	/opt/homebrew/bin/php /opt/homebrew/bin/wp db create --quiet
+	$php $wpcli db create --quiet
 	green "Database created."
-	/opt/homebrew/bin/php /opt/homebrew/bin/wp core install --url="$project_name"."$valet_domain" --title="$project_name"."$valet_domain" --admin_user="$wp_admin_user" --admin_password="$wp_admin_password" --admin_email="$wp_admin_email" --quiet
+	$php $wpcli core install --url="$project_name"."$valet_domain" --title="$project_name"."$valet_domain" --admin_user="$wp_admin_user" --admin_password="$wp_admin_password" --admin_email="$wp_admin_email" --quiet
 	green "WordPress has been installed."
 	cd "$sites_folder"/"$project_name"/
 }
@@ -59,16 +64,12 @@ PHP
 wordpress_login_info () {
 	white "==================================================================="
 	green "Project Created: http://$project_name.$valet_domain/"
-	cyan "Login: http://$project_name.$valet_domain/wp-login.php"
+	cyan "Login: http://$project_name.$valet_domain/wp-login.php" 
 	cyan "Username: $wp_admin_user"
 	cyan "Password: $wp_admin_password"
 	if [ "$open_browser" = 1 ]; then
 		open -a "$browser" -g http://$project_name.$valet_domain/wp-login.php
 	fi
-	if [ "$livereload" = 1 ]; then
-		yellow "Added to LiveReload."
-		open "livereload:add?path="$sites_folder"/"$project_name"/"
-	fi	
 	echo " "
 }
 
@@ -77,17 +78,17 @@ plugin_activation () {
 	# Detect if plugins should be added
 	if [ ! -z "$plugins_add" -a "$plugins_add" != " " ]; then
 			green "Installing plugins."
-			echo $plugins_add | xargs /opt/homebrew/bin/php /opt/homebrew/bin/wp plugin install --quiet
+			echo $plugins_add | xargs $php $wpcli plugin install --quiet
 			yellow "$plugins_add added to install."
 	fi
 	# Detect if plugins should be removed
 	if [ ! -z "$plugins_remove" -a "$plugins_remove" != " " ]; then
 	        red "Removing plugins."
-			echo $plugins_remove | xargs /opt/homebrew/bin/php /opt/homebrew/bin/wp plugin delete --quiet
+			echo $plugins_remove | xargs $php $wpcli plugin delete --quiet
 			red "$plugins_remove removed from install"
 	fi 
 	# Activate all installed plugins
-	/opt/homebrew/bin/php /opt/homebrew/bin/wp plugin activate --all --quiet
+	$php $wpcli plugin activate --all --quiet
 	green "Plugins have been activated."
 }
 
@@ -104,7 +105,8 @@ browser=$(cat $vp_path/config.json|jq -r .browser)
 valet_domain=$(cat $vp_path/config.json|jq -r .valet_domain)
 plugins_add=$(cat $vp_path/config.json|jq -r .plugins_add)
 plugins_remove=$(cat $vp_path/config.json|jq -r .plugins_remove)
-livereload=$(cat $vp_path/config.json|jq -r .livereload)
+php=$(cat $vp_path/config.json|jq -r .php)
+wpcli=$(cat $vp_path/config.json|jq -r .wpcli)
 
 # ValetPress Commands
 if [ $# -lt 1 ] || [ "$1" = "help" ] || [ "$1" = "-h" ] || [ -z "$1" ];then
@@ -120,12 +122,16 @@ else
 	if [ "$1" = "create" ]; then
 		white "Please enter the name of your project."
 		read -p ": " -r project_name
+		while [[ -z "$project_name" ]]; do
+			white "You must specify a name for the project."
+			read -p ": " -r project_name
+		done
 		cd "$sites_folder"
 
 		# Delete existing project if detected
 		if [ -d "$project_name" ]; then
 			cd "$project_name"
-			/opt/homebrew/bin/php /opt/homebrew/bin/wp db drop --yes
+			$php $wpcli db drop --yes
 			cd ..
 			rm -rf "$project_name"
 			red "Previous Project Deleted: $project_name"
@@ -144,7 +150,7 @@ else
 			# Default WordPress Install
 			if [ "$create_choice" = 1 ]; then
 				yellow "Downloading WordPress."
-				/opt/homebrew/bin/php /opt/homebrew/bin/wp core download --quiet
+				$php $wpcli core download --quiet
 				green "WordPress have been downloaded."
 				wordpress_installer
 				cp -R $vp_path/plugins/ $sites_folder/$project_name/wp-content/plugins/
@@ -157,11 +163,11 @@ else
 				yellow "Theme Location eg ~/Downloads/theme.zip "
 				read -r theme_location
 				yellow "Downloading WordPress."
-				/opt/homebrew/bin/php /opt/homebrew/bin/wp core download --skip-content --quiet
+				$php $wpcli core download --skip-content --quiet
 				green "WordPress has been downloaded."
 				mkdir $sites_folder/"$project_name"/wp-content/plugins/
 				wordpress_installer
-				/opt/homebrew/bin/php /opt/homebrew/bin/wp theme install $theme_location --activate
+				$php $wpcli theme install $theme_location --activate
 				cp -R $vp_path/plugins/ $sites_folder/$project_name/wp-content/plugins/
 				plugin_activation
 				wordpress_login_info
@@ -181,12 +187,8 @@ else
 			delete_confirm_converted=$( echo "$delete_confirm" | tr "[:upper:]" "[:lower:]" )
 
 			if [ "$delete_confirm_converted" = "y" ]; then
-				if [ "$livereload" = 1 ]; then
-					red "Removing from LiveReload"
-					open "livereload:remove?path="$sites_folder"/"$project_name"/"
-				fi	
 				cd "$project_name"
-				/opt/homebrew/bin/php /opt/homebrew/bin/wp db drop --yes --quiet
+				$php $wpcli db drop --yes --quiet
 				red "Database has been dropped."
 				cd ..
 				rm -rf "$project_name"

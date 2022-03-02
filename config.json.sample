@@ -8,5 +8,6 @@
   "valet_domain": "test",
   "plugins_add": "hide-admin-bar wordpress-seo",
   "plugins_remove": "akismet hello",
-  "livereload": "0"
+  "php": "/bin/php",
+  "wpcli": "/bin/wp"
 }
