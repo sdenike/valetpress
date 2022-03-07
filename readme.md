@@ -1,5 +1,3 @@
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/O5O15TWEC)
-
 # ValetPress
 
 ValetPress allows for the quick installation and configuration of WordPress install for local development and testing. The idea of this script was inspired from the script that @AaronRutley originally created (https://github.com/AaronRutley/valetpress), but has been written from the ground up to provide cleaner code, as well as adding/removing features that I felt were or were not necessary for my daily usage.
