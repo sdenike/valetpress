@@ -144,7 +144,8 @@ else
 		# Select install method
 		white "How do you wish to install WordPress? "
 		cyan " 1.) Default WordPress Install "
-		cyan " 2.) WordPress with specific theme "
+		cyan " 2.) WordPress with WooCommerce "
+		cyan " 3.) WordPress with specific theme "
 		read -p "Choice: " -r create_choice
 
 			# Default WordPress Install
@@ -158,8 +159,21 @@ else
 				wordpress_login_info
 			fi
 			
-			# WordPress install with specific theme
+			# WordPress with WooCommerce
 			if [ "$create_choice" = 2 ]; then
+				yellow "Downloading WordPress."
+				$php $wpcli core download --quiet
+				green "WordPress has been downloaded."
+				wordpress_installer
+				$php $wpcli plugin install woocommerce --activate
+				green "WooCommerce has been installed."
+				cp -R $vp_path/plugins/ $sites_folder/$project_name/wp-content/plugins/
+				plugin_activation
+				wordpress_login_info
+			fi	
+			
+			# WordPress install with specific theme
+			if [ "$create_choice" = 3 ]; then
 				yellow "Theme Location eg ~/Downloads/theme.zip "
 				read -r theme_location
 				yellow "Downloading WordPress."
