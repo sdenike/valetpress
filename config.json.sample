@@ -6,8 +6,11 @@
   "open_browser": "1",
   "browser": "Safari",
   "valet_domain": "test",
+  "secure_domain": "1",
   "plugins_add": "hide-admin-bar wordpress-seo",
   "plugins_remove": "akismet hello",
+  "auto_update": "0",
   "php": "/bin/php",
+  "valet": "/bin/valet",
   "wpcli": "/bin/wp"
 }

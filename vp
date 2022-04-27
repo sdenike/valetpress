@@ -6,7 +6,7 @@ if [[ "${DEBUG}" ]]; then
   set -x
 fi
 
-version="2022.3.2.1"
+version="2022.4.27.5"
 
 # Added for debugging
 set -euo pipefail
@@ -46,12 +46,32 @@ function white() {
 
 # Core WordPress install function
 wordpress_installer () {
+# Check if SSL shoud be enabled
+if [ "$secure_domain" = 1 ]; then
+	$php $wpcli core config --dbname="$project_name" --dbuser=root --dbhost=localhost --quiet --extra-php <<PHP
+define( 'FS_METHOD', 'direct' );
+define( 'WP_ENVIRONMENT_TYPE', 'development' );
+define( 'WP_SITEURL', 'https://$project_name.$valet_domain/' );
+define( 'WP_HOME', 'https://$project_name.$valet_domain/' );
+PHP
+	green "SSL has been enabled."
+else
 	$php $wpcli core config --dbname="$project_name" --dbuser=root --dbhost=localhost --quiet --extra-php <<PHP
 define( 'FS_METHOD', 'direct' );
 define( 'WP_ENVIRONMENT_TYPE', 'development' );
 define( 'WP_SITEURL', 'http://$project_name.$valet_domain/' );
 define( 'WP_HOME', 'http://$project_name.$valet_domain/' );
 PHP
+	red "SSL has not been enabled."
+fi
+
+# Enable autoupdate of core, plugins and themes
+if [ "$auto_update" = 1 ]; then
+	wp config set WP_AUTO_UPDATE_CORE true --quiet
+	wp config set auto_update_plugin __return_false --quiet
+	wp config set auto_update_theme __return_false --quiet
+	green "Auto updates have been enabled for core, plugins and themes."
+fi
 	green "wp-config.php has been generated."
 	$php $wpcli db create --quiet
 	green "Database created."
@@ -60,15 +80,35 @@ PHP
 	cd "$sites_folder"/"$project_name"/
 }
 
+# Domain SSL check
+ssl_check () {
+	if [ "$secure_domain" = 1 ]; then
+		cd $sites_folder/$project_name
+		sudo $valet secure
+		green "SSL have been activated."
+	else
+		yellow "SSL is NOT activated."
+	fi
+}
+
 # Output WordPress login info
 wordpress_login_info () {
 	white "==================================================================="
+if [ "$secure_domain" = "1" ]; then
+	green "Project Created: https://$project_name.$valet_domain/"
+	cyan "Login: https://$project_name.$valet_domain/wp-login.php" 
+else
 	green "Project Created: http://$project_name.$valet_domain/"
 	cyan "Login: http://$project_name.$valet_domain/wp-login.php" 
+fi
 	cyan "Username: $wp_admin_user"
 	cyan "Password: $wp_admin_password"
 	if [ "$open_browser" = 1 ]; then
-		open -a "$browser" -g http://$project_name.$valet_domain/wp-login.php
+		if [ "$secure_domain" = "1" ]; then
+			open -a "$browser" -g https://$project_name.$valet_domain/wp-login.php
+		else
+			open -a "$browser" -g http://$project_name.$valet_domain/wp-login.php
+		fi
 	fi
 	echo " "
 }
@@ -103,9 +143,12 @@ sites_folder=$(cat $vp_path/config.json|jq -r .sites_folder)
 open_browser=$(cat $vp_path/config.json|jq -r .open_browser)
 browser=$(cat $vp_path/config.json|jq -r .browser)
 valet_domain=$(cat $vp_path/config.json|jq -r .valet_domain)
+secure_domain=$(cat $vp_path/config.json|jq -r .secure_domain)
 plugins_add=$(cat $vp_path/config.json|jq -r .plugins_add)
 plugins_remove=$(cat $vp_path/config.json|jq -r .plugins_remove)
+auto_update=$(cat $vp_path/config.json|jq -r .auto_update)
 php=$(cat $vp_path/config.json|jq -r .php)
+valet=$(cat $vp_path/config.json|jq -r .valet)
 wpcli=$(cat $vp_path/config.json|jq -r .wpcli)
 
 # ValetPress Commands
@@ -119,7 +162,7 @@ if [ $# -lt 1 ] || [ "$1" = "help" ] || [ "$1" = "-h" ] || [ -z "$1" ];then
 	exit 1;
 else
 	# ValetPress create option
-	if [ "$1" = "create" ]; then
+	if [ "$1" = "create" ] || [ "$1" = "-c" ]; then
 		white "Please enter the name of your project."
 		read -p ": " -r project_name
 		while [[ -z "$project_name" ]]; do
@@ -148,48 +191,51 @@ else
 		cyan " 3.) WordPress with specific theme "
 		read -p "Choice: " -r create_choice
 
-			# Default WordPress Install
-			if [ "$create_choice" = 1 ]; then
-				yellow "Downloading WordPress."
-				$php $wpcli core download --quiet
-				green "WordPress have been downloaded."
-				wordpress_installer
-				cp -R $vp_path/plugins/ $sites_folder/$project_name/wp-content/plugins/
-				plugin_activation
-				wordpress_login_info
-			fi
+		# Default WordPress Install
+		if [ "$create_choice" = 1 ]; then
+			yellow "Downloading WordPress."
+			$php $wpcli core download --quiet
+			green "WordPress have been downloaded."
+			wordpress_installer
+			cp -R $vp_path/plugins/ $sites_folder/$project_name/wp-content/plugins/
+			plugin_activation
+			ssl_check
+			wordpress_login_info
+		fi
 			
-			# WordPress with WooCommerce
-			if [ "$create_choice" = 2 ]; then
-				yellow "Downloading WordPress."
-				$php $wpcli core download --quiet
-				green "WordPress has been downloaded."
-				wordpress_installer
-				$php $wpcli plugin install woocommerce --activate
-				green "WooCommerce has been installed."
-				cp -R $vp_path/plugins/ $sites_folder/$project_name/wp-content/plugins/
-				plugin_activation
-				wordpress_login_info
-			fi	
+		# WordPress with WooCommerce
+		if [ "$create_choice" = 2 ]; then
+			yellow "Downloading WordPress."
+			$php $wpcli core download --quiet
+			green "WordPress has been downloaded."
+			wordpress_installer
+			$php $wpcli plugin install woocommerce --activate
+			green "WooCommerce has been installed."
+			cp -R $vp_path/plugins/ $sites_folder/$project_name/wp-content/plugins/
+			plugin_activation
+			ssl_check
+			wordpress_login_info
+		fi	
 			
-			# WordPress install with specific theme
-			if [ "$create_choice" = 3 ]; then
-				yellow "Theme Location eg ~/Downloads/theme.zip "
-				read -r theme_location
-				yellow "Downloading WordPress."
-				$php $wpcli core download --skip-content --quiet
-				green "WordPress has been downloaded."
-				mkdir $sites_folder/"$project_name"/wp-content/plugins/
-				wordpress_installer
-				$php $wpcli theme install $theme_location --activate
-				cp -R $vp_path/plugins/ $sites_folder/$project_name/wp-content/plugins/
-				plugin_activation
-				wordpress_login_info
-			fi	
+		# WordPress install with specific theme
+		if [ "$create_choice" = 3 ]; then
+			yellow "Theme Location eg ~/Downloads/theme.zip "
+			read -r theme_location
+			yellow "Downloading WordPress."
+			$php $wpcli core download --skip-content --quiet
+			green "WordPress has been downloaded."
+			mkdir $sites_folder/"$project_name"/wp-content/plugins/
+			wordpress_installer
+			$php $wpcli theme install $theme_location --activate
+			cp -R $vp_path/plugins/ $sites_folder/$project_name/wp-content/plugins/
+			plugin_activation
+			ssl_check
+			wordpress_login_info
+		fi	
 	fi
 
 	# ValetPress delete option
-	if [ "$1" = "delete" ]; then
+	if [ "$1" = "delete" ] || [ "$1" = "-d" ]; then
 		if [ "$(ls -A "$sites_folder")" ]; then
 			cd "$sites_folder"
 			red "ValetPress, delete a project "
@@ -202,6 +248,16 @@ else
 
 			if [ "$delete_confirm_converted" = "y" ]; then
 				cd "$project_name"
+
+				# Detect and remove SSL
+				if $($valet secured | grep -q $project_name)
+				then
+					red "SSL detected, removing certificate.";
+					sudo $valet unsecure --quiet $project_name
+				else
+					yellow "SSL not-detected.";
+				fi
+				
 				$php $wpcli db drop --yes --quiet
 				red "Database has been dropped."
 				cd ..
