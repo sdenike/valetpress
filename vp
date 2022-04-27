@@ -154,7 +154,7 @@ wpcli=$(cat $vp_path/config.json|jq -r .wpcli)
 # ValetPress Commands
 if [ $# -lt 1 ] || [ "$1" = "help" ] || [ "$1" = "-h" ] || [ -z "$1" ];then
 	clear
-	white "ValetPress $version"
+	white "ValetPress $version - Created by Shelby DeNike"
 	cyan "  vp create - Create fresh WordPress install. "
 	cyan "  vp delete - Delete an existing WordPress project. "
 	cyan "  vp help - Display ValetPress help screen. "
