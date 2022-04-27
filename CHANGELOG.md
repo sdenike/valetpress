@@ -17,10 +17,12 @@ See below for changed information
 - Added auto_update feature to config
 - Added additional flags to options
 - Added SSL removal on delete
-- Removed code from valetpress WordPress plugin
-- Simplified code in valetpress WordPress plugin
-- Updated auto-login code in valetpress plugin.
+- Removed code from ValetPress WordPress plugin
+- Simplified code in ValetPress WordPress plugin
+- Updated auto-login code in ValetPress plugin.
 - Corrected typos in [readme.md](https://github.com/SystmWeb/valetpress/blob/master/readme.md)
+- Updated GPG key for verified commits
+- Added new release tag
  
 ### Fixed
  

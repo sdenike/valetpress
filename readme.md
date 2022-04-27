@@ -26,14 +26,14 @@ While the original script works great… I got bored and decided to rewrite it f
 
 ## Available Commands:
 
-`vp create`
+`vp create or vp -c`
 
 - Download WordPress into a directory like `~/Sites/myproject` as specified in the config.json
 - Setup the database called `myproject` & configure the install
 - Create a user `admin` with the password `password`
 - Have `myproject.test` running in just a few seconds
 
-`vp delete`
+`vp delete or vp -d`
 
 - Lists all ValetPress installations 
 - Will ask for the name of the project you would like to delete
@@ -41,14 +41,14 @@ While the original script works great… I got bored and decided to rewrite it f
 - Deletes the database for that project
 - Deletes the directory for that project
 
-`vp help`
+`vp help of vp -h`
 
 - Will display a summary of available commands
 
 ## Config Explained
  - `wp_admin_email` is used as the admin email address for new WP installs. 
- - `wp_admin_user` is used as the username for new WP installs. [If changed you must update the username in the valetpress plugin](https://github.com/SystmWeb/valetpress/blob/master/plugins/valetpress/valetpress.php#L17)
- - `wp_admin_password` is used as the password for new WP installs. [If changed you must update the password in the valetpress plugin](https://github.com/SystmWeb/valetpress/blob/master/plugins/valetpress/valetpress.php#L18)
+ - `wp_admin_user` is used as the username for new WP installs. [If changed you must update the username in the ValetPress plugin](https://github.com/SystmWeb/valetpress/blob/master/plugins/valetpress/valetpress.php#L17)
+ - `wp_admin_password` is used as the password for new WP installs. [If changed you must update the password in the ValetPress plugin](https://github.com/SystmWeb/valetpress/blob/master/plugins/valetpress/valetpress.php#L18)
  - `sites_folder` is a directory that you've run `valet park` in to serve sites.
  - `open_browser` if set to `1` a browser will auto-open after the install completes, `0` will make so that it doesn't
  - `browser` you can set the default browser such as Safari, Google Chrome, etc

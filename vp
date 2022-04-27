@@ -6,7 +6,7 @@ if [[ "${DEBUG}" ]]; then
   set -x
 fi
 
-version="2022.4.27.5"
+version="2022.4.27.6"
 
 # Added for debugging
 set -euo pipefail
@@ -157,7 +157,7 @@ if [ $# -lt 1 ] || [ "$1" = "help" ] || [ "$1" = "-h" ] || [ -z "$1" ];then
 	white "ValetPress $version"
 	cyan "  vp create - Create fresh WordPress install. "
 	cyan "  vp delete - Delete an existing WordPress project. "
-	cyan "  vp help   - Display ValetPress help screen. "
+	cyan "  vp help - Display ValetPress help screen. "
 	echo " "
 	exit 1;
 else
